@@ -12,6 +12,7 @@ window.addEventListener('DOMContentLoaded', () => {
   KEEP.localStorageKey = 'KEEP-THEME-STATUS'
 
   KEEP.styleStatus = {
+    isExpandPageWidth: false,
     isDark: false,
     fontSizeLevel: 0,
     isShowToc: true
@@ -24,15 +25,6 @@ window.addEventListener('DOMContentLoaded', () => {
       `color: #fadfa3; background: #333; padding: 6px 0;`,
       `padding: 6px 0;`
     )
-  }
-  KEEP.printThemeInfo()
-
-  // set version number of footer
-  KEEP.setFooterVersion = () => {
-    const vd = document.querySelector('.footer .keep-version')
-    vd && (vd.innerHTML = KEEP.themeInfo.theme)
-    const vd2 = document.querySelector('.footer .shields-keep-version')
-    vd2 && (vd2.src = vd2.src.replace('Keep', KEEP.themeInfo.theme))
   }
 
   // set styleStatus to localStorage
@@ -54,18 +46,21 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  KEEP.initExecute = () => {
+  KEEP.refresh = () => {
     KEEP.initUtils()
     KEEP.initHeaderShrink()
     KEEP.initModeToggle()
     KEEP.initBack2Top()
-    KEEP.setFooterVersion()
 
     if (local_search?.enable === true) {
       KEEP.initLocalSearch()
     }
 
-    if (code_block?.tools?.enable === true) {
+    if (
+      code_block?.tools?.enable === true ||
+      code_block?.enable === true ||
+      code_copy?.enable === true
+    ) {
       KEEP.initCodeBlockTools()
     }
 
@@ -73,5 +68,7 @@ window.addEventListener('DOMContentLoaded', () => {
       KEEP.initLazyLoad()
     }
   }
-  KEEP.initExecute()
+
+  KEEP.printThemeInfo()
+  KEEP.refresh()
 })
