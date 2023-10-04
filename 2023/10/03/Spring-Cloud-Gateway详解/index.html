@@ -9,7 +9,7 @@
     
     <title>
         
-            木心诗二三句 |
+            Spring Cloud Gateway详解 |
         
         愔颂
     </title>
@@ -184,7 +184,7 @@
         <div class="article-content-container">
 
             <div class="article-title">
-                <span class="title-hover-animation">木心诗二三句</span>
+                <span class="title-hover-animation">Spring Cloud Gateway详解</span>
             </div>
 
             
@@ -204,13 +204,13 @@
         
             <i class="fa-regular fa-calendar-plus"></i>&nbsp;
         
-        <span class="pc">2020-06-12 20:35:14</span>
-        <span class="mobile">2020-06-12 20:35</span>
+        <span class="pc">2023-10-03 20:54:55</span>
+        <span class="mobile">2023-10-03 20:54</span>
     </span>
     
         <span class="article-update-date article-meta-item">
         <i class="fas fa-file-pen"></i>&nbsp;
-        <span class="pc">2022-11-13 21:02:26</span>
+        <span class="pc">2023-10-04 14:33:54</span>
     </span>
     
     
@@ -219,7 +219,7 @@
             <ul>
                 
                     <li>
-                        <a href="/categories/%E8%AF%97%E6%AD%8C%E6%89%8B%E8%AE%B0/">诗歌手记</a>&nbsp;
+                        <a href="/categories/Spring-Cloud/">Spring Cloud</a>&nbsp;
                     </li>
                 
             </ul>
@@ -243,226 +243,117 @@
             
 
             <div class="article-content keep-markdown-body">
-                <p>木心的诗，感觉语言上特别有古意与情味，其诗描写故景往事者读之令人口齿含香，即刻诵之。今日夏初梅雨，摘之二三，与时消夏。</p>
+                <meta name="referrer" content="no-referrer"/>
+
+<p>微服务网关，为什么需要API网关？网关的工作流程，断言、动态路由、过滤器、token认证。</p>
 <span id="more"></span>
 
-<center>
+<h1 id="1、为什么需要API网关？"><a href="#1、为什么需要API网关？" class="headerlink" title="1、为什么需要API网关？"></a>1、为什么需要API网关？</h1><p>在 SpringCloud 微服务架构中，往往有多个微服务，这些微服务可能部署在不同的机器上，而且一个微服务可能会扩容成多个相同的微服务，组成微服务集群。</p>
+<p>这种情况下，会存在如下问题：</p>
+<ul>
+<li>如果需要添加鉴权功能，则需要对每个微服务进行改造。</li>
+<li>如果需要对流量进行控制，则需要对每个微服务进行改造。</li>
+<li>跨域问题，需要对每个微服务进行改造。</li>
+<li>存在安全问题，每个微服务需要暴露自己的 Endpoint 给客户端。</li>
+</ul>
+<p>Endpoint 就是服务的访问地址 + 端口，比如下面的地址：</p>
+<p><a class="link"   target="_blank" rel="noopener" href="http://order.passjava.cn:8000/" >http://order.passjava.cn:8000<i class="fas fa-external-link-alt"></i></a></p>
+<ul>
+<li>灰度发布、动态路由需要对每个微服务进行改造。</li>
+</ul>
+<p>这个问题的痛点是各个微服务都是一个入口，有没有办法统一入口呢？</p>
+<p>解决这个问题的方式就是在客户端和服务器之间加个中间商就好了呀，只有中间商一个入口，这个中间商就是网关。</p>
+<h1 id="2、工作流程"><a href="#2、工作流程" class="headerlink" title="2、工作流程"></a>2、工作流程</h1><p>Gateway 的工作流程如下图所示：</p>
+<p><img  
+                     lazyload
+                     alt="image"
+                     data-src="https://cdn.nlark.com/yuque/0/2023/png/36098302/1695801024153-ef5f8634-22b0-4735-aa8e-dcca23a8c42f.png"
+                      alt="img"
+                ></p>
+<p>① <strong>路由判断</strong>；客户端的请求到达网关后，先经过 Gateway Handler Mapping 处理，这里面会做断言（Predicate）判断，看下符合哪个路由规则，这个路由映射后端的某个服务。</p>
+<p>② <strong>请求过滤</strong>：然后请求到达 Gateway Web Handler，这里面有很多过滤器，组成过滤器链（Filter Chain），这些过滤器可以对请求进行拦截和修改，比如添加请求头、参数校验等等，有点像净化污水。然后将请求转发到实际的后端服务。这些过滤器逻辑上可以称作 Pre-Filters，Pre 可以理解为“在…之前”。</p>
+<p>③ <strong>服务处理</strong>：后端服务会对请求进行处理。</p>
+<p>④ <strong>响应过滤</strong>： 后端处理完结果后，返回给 Gateway 的过滤器再次做处理，逻辑上可以称作 Post-Filters，Post 可以理解为“在…之后”。</p>
+<p>⑤ <strong>响应返回</strong>：响应经过过滤处理后，返回给客户端。</p>
+<p>小结：客户端的请求先通过匹配规则找到合适的路由，就能映射到具体的服务。然后请求经过过滤器处理后转发给具体的服务，服务处理后，再次经过过滤器处理，最后返回给客户端。</p>
+<h1 id="3、断言"><a href="#3、断言" class="headerlink" title="3、断言"></a>3、断言</h1><p>断言（Predicate）这个词听起来极其深奥，它是一种编程术语，我们生活中根本就不会用它。说白了它就是对一个表达式进行 if 判断，结果为真或假，如果为真则做这件事，否则做那件事。</p>
+<p>在 Gateway 中，如果客户端发送的请求满足了断言的条件，则映射到指定的路由器，就能转发到指定的服务上进行处理。</p>
+<p>断言配置的示例如下，配置了两个路由规则，有一个 predicates 断言配置，当请求 url 中包含 api&#x2F;thirdparty，就匹配到了第一个路由 route_thirdparty。</p>
+<p><img  
+                     lazyload
+                     alt="image"
+                     data-src="https://cdn.nlark.com/yuque/0/2023/png/36098302/1695801280475-4ab78d81-67f6-407e-bdcf-5d79486f0ccb.png"
+                      alt="img"
+                ></p>
+<p>接下来我们看下 Route 路由和 Predicate 断言的对应关系：</p>
+<p><img  
+                     lazyload
+                     alt="image"
+                     data-src="https://cdn.nlark.com/yuque/0/2023/png/36098302/1695801368480-aee2d8aa-f8f9-4b18-b4f3-ffdd5c4552f7.png"
+                      alt="img"
+                ></p>
+<ul>
+<li><strong>一对多</strong>：一个路由规则可以包含多个断言。如上图中路由 Route1 配置了三个断言 Predicate。</li>
+<li><strong>同时满足</strong>：如果一个路由规则中有多个断言，则需要同时满足才能匹配。如上图中路由 Route2 配置了两个断言，客户端发送的请求必须同时满足这两个断言，才能匹配路由 Route2。</li>
+<li><strong>第一个匹配成功</strong>：如果一个请求可以匹配多个路由，则映射第一个匹配成功的路由。如上图所示，客户端发送的请求满足 Route3 和 Route4 的断言，但是 Route3 的配置在配置文件中靠前，所以只会匹配 Route3。</li>
+</ul>
+<p>常见的 Predicate 断言配置如下所示，假设匹配路由成功后，转发到 <a class="link"   target="_blank" rel="noopener" href="http://localhost:9001/" >http://localhost:9001<i class="fas fa-external-link-alt"></i></a>。</p>
+<p><img  
+                     lazyload
+                     alt="image"
+                     data-src="https://cdn.nlark.com/yuque/0/2023/png/36098302/1695801489096-a854884e-e20a-442d-aa9a-dd5bbd2d94b1.png"
+                      alt="img"
+                ></p>
+<p><strong>代码演示：</strong></p>
+<p>下面演示 Gateway 中通过断言来匹配路由的例子。</p>
+<ul>
+<li>新建一个 Maven 工程，引入 Gateway 依赖。</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-gateway<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="少年朝食"><a href="#少年朝食" class="headerlink" title="少年朝食"></a>少年朝食</h2><center>
-    清早阳光<br>
-    照明高墙一角<br>
-    喜鹊喀喀叫<br>
-    天井花坛葱茏<br>
-    丫鬟悄声报用膳<br>
-    紫檀圆桌<br>
-    四碟端陈<br>
-    姑苏酱鸭<br>
-    平湖糟蛋<br>
-    撕蒸笋<br>
-    豆干末子拌马兰头<br>
-    莹白的暖暖香粳米粥<br>
-    没有比粥更温柔的了<br>
-    东坡、剑南皆嗜粥<br>
-    念予毕生流离红尘<br>
-    就找不到一个似粥温柔之人<br>
-    吁，予仍频忆江南古镇<br>
-    梁昭明太子读书于我家后园<br>
-    窗前的银杏树是六朝之前的<br>
-    昔南塘春半、风和马嘶<br>
-    日长无事蝴蝶飞<br>
-</center>
-
-
-<h2 id="大卫"><a href="#大卫" class="headerlink" title="大卫"></a>大卫</h2><center>
-莫倚偎我<br>
-我习于冷<br>
-志于成冰<br>
-莫倚偎我<br>
-别走近我<br>
-我正升焰<br>
-万木俱焚<br>
-别走近我<br>
-</center>
-
-
-
-
-
-<h2 id="清嘉录"><a href="#清嘉录" class="headerlink" title="清嘉录"></a>清嘉录</h2><center>
-**其一**
-<br>
-平明舟出山庄<br>
-万枝垂柳，烟雨迷茫<br>
-回眺岸上土屋亦如化境<br>
-舟子挽纤行急<br>
-误窜层网中，遂致勃谿<br>
-登岸相劝，几为乡人窘<br>
-偿以百钱，始悻悻散<br>
-    <br>
-行百余里，滩险日暮<br>
-约去港口数里以泊<br>
-江潮大来，荻芦如雪<br>
-肃肃与风相抟<br>
-是夕正望，月似紫铜盘<br>
-水势益长，澎湃声起<br>
-俄闻金山蒲牢动，漏下矣<br>
-    <br>
-**其二**
-<br>
-梅雨时备缸瓮收旧雨水<br>
-供烹茶，曰梅水<br>
-梅天多雨，雨水极佳<br>
-贮之味经年不变<br>
-人于初交黄梅时收雨<br>
-以其甘滑胜山泉<br>
-</center>
-
-<p>​    </p>
-<h2 id="从前慢"><a href="#从前慢" class="headerlink" title="从前慢"></a>从前慢</h2><center>
-记得早先少年时<br>
-大家诚诚恳恳<br>
-说一句是一句<br>
-清早上火车站<br>
-长街黑暗无行人<br>
-卖豆浆的小店冒着热气<br>
-    <br>
-从前的日色变得慢<br>
-车、马、邮件都慢<br>
-一生只够爱一个人<br>
-    <br>
-从前的锁也好看<br>
-钥匙精美有样子<br>
-你锁了，人家就懂了<br>
-</center>
+<ul>
+<li>新建 application.yml 文件，添加 Gateway 的路由规则。</li>
+</ul>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring</span>:<span class="string"></span></span><br><span class="line">  <span class="attr">cloud</span>:<span class="string"></span></span><br><span class="line">    <span class="attr">gateway</span>:<span class="string"></span></span><br><span class="line">      <span class="attr">routes</span>:<span class="string"></span></span><br><span class="line">        <span class="attr">-</span> <span class="string">id: route_qq</span></span><br><span class="line">          <span class="attr">uri</span>: <span class="string">http://www.qq.com</span></span><br><span class="line">          <span class="attr">predicates</span>:<span class="string"></span></span><br><span class="line">            <span class="attr">-</span> <span class="string">Query=url,qq</span></span><br><span class="line">        <span class="attr">-</span> <span class="string">id: route_baidu</span></span><br><span class="line">          <span class="attr">uri</span>: <span class="string">http://www.baidu.com</span></span><br><span class="line">          <span class="attr">predicates</span>:<span class="string"></span></span><br><span class="line">            <span class="attr">-</span> <span class="string">Query=url,baidu</span></span><br><span class="line"><span class="attr">server</span>:<span class="string"></span></span><br><span class="line">  <span class="attr">port</span>: <span class="string">8060 复制复制失败复制成功</span></span><br></pre></td></tr></table></figure>
 
 
 
+<p>第一条路由规则：断言为 Query&#x3D;url,qq，表示当请求路径中包含 url&#x3D;qq，则跳转到<a class="link"   target="_blank" rel="noopener" href="http://www.qq.com/" >http://www.qq.com<i class="fas fa-external-link-alt"></i></a></p>
+<p>第二条路由规则：当请求路径中包含 url&#x3D;baidu，则跳转到<a class="link"   target="_blank" rel="noopener" href="http://www.baidu.com/" >http://www.baidu.com<i class="fas fa-external-link-alt"></i></a></p>
+<h1 id="4、动态路由"><a href="#4、动态路由" class="headerlink" title="4、动态路由"></a>4、动态路由</h1><p>在微服务架构中，我们不会直接通过 IP + 端口的方式访问微服务，而是通过服务名的方式来访问。如下图所示，微服务中加入了注册中心，多个微服务将自己注册到了注册中心，这样注册中心就保存了服务名和 IP+端口的映射关系。</p>
+<p><img  
+                     lazyload
+                     alt="image"
+                     data-src="https://cdn.nlark.com/yuque/0/2023/png/36098302/1695801881857-e92e323b-5271-434a-95c6-f4f2b152efa3.png"
+                      alt="img"
+                ></p>
+<p>网关经过断言匹配到一个路由后，将请求转发给指定 uri，这个 uri 可以配置成 微服务的名字，比如 passjava-member。</p>
+<p>那么这个服务名具体要转发到哪个 IP 地址和端口上呢？这个就依赖注册中心的注册表了，Gateway 从注册中心拉取注册表，就能知道服务名对应具体的 IP + 端口，如果一个服务部署了多台机器，则还可以通过负载均衡进行请求的转发。</p>
+<p>对应的配置为 uri 字段如下所示</p>
+<p><img  
+                     lazyload
+                     alt="image"
+                     data-src="https://cdn.nlark.com/yuque/0/2023/png/36098302/1695802218816-2f640936-3f23-4819-bf77-039083df9c5d.png"
+                      alt="img"
+                >uri: lb:&#x2F;&#x2F;passjava-question，表示将请求转发给 passjava-question 微服务，且支持负载均衡。lb 是 loadbalance（负载均衡) 单词的缩写。</p>
+<p>那什么叫动态路由呢？</p>
+<p>当 passjava-question 服务添加一个微服务，或者 IP 地址更换了，Gateway 都是可以感知到的，但是配置是不需要更新的。这里的动态指的是微服务的集群个数、IP 和端口是动态可变的。</p>
+<h1 id="5、过滤器"><a href="#5、过滤器" class="headerlink" title="5、过滤器"></a>5、过滤器</h1><p>过滤器 Filter 按照请求和响应可以分为两种：Pre 类型和 Post 类型。</p>
+<p><strong>Pre 类型</strong>：在请求被转发到微服务之前，对请求进行拦截和修改，例如参数校验、权限校验、流量监控、日志输出以及协议转换等操作。</p>
+<p><strong>Post 类型</strong>：微服务处理完请求后，返回响应给网关，网关可以再次进行处理，例如修改响应内容或响应头、日志输出、流量监控等。</p>
+<p>另外一种分类是按照过滤器 Filter 作用的范围进行划分：</p>
+<p><strong>GlobalFilter</strong>：全局过滤器，应用在所有路由上的过滤器。</p>
+<p><strong>GatewayFilter</strong>：局部过滤器，应用在单个路由或一组路由上的过滤器。</p>
+<h1 id="6、token认证"><a href="#6、token认证" class="headerlink" title="6、token认证"></a>6、token认证</h1><p>在用 Gateway 做登录认证的时候，通常需要我们自定义一个全局过滤器做登录认证。</p>
+<p>比如客户端登录时，将用户名和密码发送给网关，网关转发给认证服务器后，如果账号密码正确，则拿到一个 JWT token，然后客户端再访问应用服务时，先将请求发送给网关，网关统一做 JWT 认证，如果 JWT 符合条件，再将请求转发给应用服务。</p>
+<p>原理如下图所示：</p>
+<p><img  
+                     lazyload
+                     alt="image"
+                     data-src="https://cdn.nlark.com/yuque/0/2023/png/36098302/1695802561955-04c057a5-34dc-4bfe-82ea-6f74ec89b3d6.png"
+                      alt="img"
+                ></p>
 
-<h2 id="魏玛早春"><a href="#魏玛早春" class="headerlink" title="魏玛早春"></a>魏玛早春</h2><center>
-有一株树<br>
-曾见一株这样的树<br>
-冬季晴和了几天<br>
-不觉彤云叆叇<br>
-万千乌鸦出林<br>
-聒鸣飞旋<br>
-乡民谓之噪雪<br>
-称彤云为酿雪<br>
-风凛冽<br>
-行人匆匆回家<br>
-曾见一株树在这样的时日<br>
-枝头齐茁蓓蕾<br>
-淡绛的星星点点密布楂条<br>
-长势迅速梢端尤累累若不胜载<br>
-际此霙雪纷纷下<br>
-无数花苞仰雪绽放<br>
-雪片愈大愈紧<br>
-群花朵朵舒展<br>
-树高十米<br>
-干围一点五米<br>
-叶如樟似杨<br>
-顶冠直径十余米<br>
-花状类乎扶桑之樱<br>
-色与雪同<br>
-吐香清馥<br>
-冬季中下几遭雪<br>
-发几度花<br>
-霰霙之夕<br>
-寂然不应<br>
-初雪之顷无气息<br>
-四野积雪丰厚<br>
-便闲幽馨流播<br>
-昼夜氤氲<br>
-雪销<br>
-花凋谢<br>
-植物志上没有这株树的学名<br>
-中国洞庭湖之南湘省 洞口县 水口山<br>
-树在那里已两百多年<br>
-</center>
-
-
-
-<h2 id="爪哇国"><a href="#爪哇国" class="headerlink" title="爪哇国"></a>爪哇国</h2><center>
-从前的人真有趣<br>
-他们要形容荒唐<br>
-便说“一错错到了爪哇国”<br>
-他们以为爪哇是最远的了<br>
-你想明朝人有多可爱<br>
-</center>
-
-
-
-
-<h2 id="如偈"><a href="#如偈" class="headerlink" title="如偈"></a>如偈</h2><center>
-晚晴风光好<br>
-大梦觉犹眠<br>
-每忆儿时景<br>
-莲叶何田田<br>
-</center>
-
-
-
-
-<h2 id="谑庵片简"><a href="#谑庵片简" class="headerlink" title="谑庵片简"></a>谑庵片简</h2><center>
-隆恩寺无他奇<br>
-独大会明堂百余丈<br>
-可玩月<br>
-径下有云深庵<br>
-五月，啖其樱桃<br>
-八月，落其苹果<br>
-樱桃人啖后百鸟俱来<br>
-绿羽翠翎者，白身朱咮者<br>
-嘈嘈各呈妙音<br>
-</center>
-
-
-
-
-<h2 id="京师五月"><a href="#京师五月" class="headerlink" title="京师五月"></a>京师五月</h2><center>
-石榴花正开<br>
-照眼鲜明<br>
-居人每与夹竹桃列中庭<br>
-榴竹之间，配以鱼缸<br>
-朱鳞数尾游漾其中<br>
-几于家家如此<br>
-</center>
-
-
-
-
-<h2 id="我"><a href="#我" class="headerlink" title="我"></a>我</h2><center>
-我是一个在黑暗中大雪纷飞的人哪<br>
-</center>
-
-
-
-
-<h2 id="浣花溪归"><a href="#浣花溪归" class="headerlink" title="浣花溪归"></a>浣花溪归</h2><center>
-出成都门<br>
-左万里桥<br>
-西折，溪流纤秀长曲<br>
-如连环，如玦色<br>
-如鉴，如琅玕<br>
-窈然深碧<br>
-潆回城下<br>
-皆浣花溪之委也<br>
-</center>
-
-
-
-
-<h2 id="夏日山居"><a href="#夏日山居" class="headerlink" title="夏日山居"></a>夏日山居</h2><center>
-遍地悬铃木<br>
-树叶杂花横生<br>
-紫檀，木兰，石榴<br>
-扇形的棕榈<br>
-油润润的乌柏<br>
-<br>
-朝暾初升<br>
-小丘上阳光已很强烈<br>
-芬芳的雾闪着兰晕<br>
-林薮蓊郁，群峦后<br>
-终年积雪的巍巍高峰<br>
-</center>
             </div>
 
             
@@ -475,13 +366,13 @@
                         <div class="article-prev">
                             <a class="prev"
                                rel="prev"
-                               href="/2020/11/12/2020-11-12-%E6%81%AD%E7%8E%8B%E5%BA%9C%E8%8A%B1%E5%9B%AD%E6%B8%B8%E8%AE%B0/"
+                               href="/2023/10/03/NodeJs&amp;Vue%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E6%95%99%E7%A8%8B/"
                             >
                             <span class="left arrow-icon flex-center">
                               <i class="fas fa-chevron-left"></i>
                             </span>
                                 <span class="title flex-center">
-                                <span class="post-nav-title-item">恭王府花园游记</span>
+                                <span class="post-nav-title-item">NodeJs&amp;Vue安装配置教程</span>
                                 <span class="post-nav-item">上一篇</span>
                             </span>
                             </a>
@@ -491,10 +382,10 @@
                         <div class="article-next">
                             <a class="next"
                                rel="next"
-                               href="/2020/05/12/2020-05-12-%E8%AF%BB%E3%80%8A%E7%90%85%E5%AC%9B%E6%96%87%E9%9B%86%E3%80%8B%E5%BD%95/"
+                               href="/2023/10/03/Redis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%8E%9F%E7%90%86/"
                             >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">读《琅嬛文集》录</span>
+                                <span class="post-nav-title-item">Redis核心技术与原理</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                                 <span class="right arrow-icon flex-center">
@@ -592,7 +483,7 @@
             <div class="toc-content-container">
                 <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%91%E5%B9%B4%E6%9C%9D%E9%A3%9F"><span class="nav-text">少年朝食</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E5%8D%AB"><span class="nav-text">大卫</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B8%85%E5%98%89%E5%BD%95"><span class="nav-text">清嘉录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E5%89%8D%E6%85%A2"><span class="nav-text">从前慢</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AD%8F%E7%8E%9B%E6%97%A9%E6%98%A5"><span class="nav-text">魏玛早春</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%88%AA%E5%93%87%E5%9B%BD"><span class="nav-text">爪哇国</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E5%81%88"><span class="nav-text">如偈</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%91%E5%BA%B5%E7%89%87%E7%AE%80"><span class="nav-text">谑庵片简</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%AC%E5%B8%88%E4%BA%94%E6%9C%88"><span class="nav-text">京师五月</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%88%91"><span class="nav-text">我</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%A3%E8%8A%B1%E6%BA%AA%E5%BD%92"><span class="nav-text">浣花溪归</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%8F%E6%97%A5%E5%B1%B1%E5%B1%85"><span class="nav-text">夏日山居</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81API%E7%BD%91%E5%85%B3%EF%BC%9F"><span class="nav-text">1、为什么需要API网关？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2%E3%80%81%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="nav-text">2、工作流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3%E3%80%81%E6%96%AD%E8%A8%80"><span class="nav-text">3、断言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4%E3%80%81%E5%8A%A8%E6%80%81%E8%B7%AF%E7%94%B1"><span class="nav-text">4、动态路由</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5%E3%80%81%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="nav-text">5、过滤器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#6%E3%80%81token%E8%AE%A4%E8%AF%81"><span class="nav-text">6、token认证</span></a></li></ol>
     </div>
 </div>
 

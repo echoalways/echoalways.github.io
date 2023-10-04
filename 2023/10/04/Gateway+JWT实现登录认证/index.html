@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="愔颂">
+    <meta name="author" content="远岫">
+    
+    <title>
+        
+            Gateway+JWT实现登录认证 |
+        
+        愔颂
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.png">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/fontawesome/css/regular.min.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/fontawesome/css/solid.min.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/fontawesome/css/brands.min.css">
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.json"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":false,"init_open":true},"style":{"primary_color":"#990033","logo":"/images/logo.png","favicon":"/images/logo.png","avatar":"https://s1.ax1x.com/2022/11/12/ziJjfK.jpg","font_size":"16px","font_family":"Microsoft YaHei","hover":{"shadow":true,"scale":true},"first_screen":{"enable":true,"header_transparent":true,"background_img":"https://s1.ax1x.com/2022/11/13/zkpQFP.jpg","description":".","font_color":"#00000000","hitokoto":false},"scroll":{"progress_bar":false,"percent":false}},"local_search":{"enable":true,"preload":true},"code_copy":{},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"default"},"side_tools":{},"pjax":{"enable":false},"lazyload":{"enable":true},"comment":{"enable":true,"use":"valine","valine":{"appid":"ZUKsDiFCHfBxuQFnh1UC5l7P-MdYXbMMI","appkey":"jQHh3ynQ7pckO3cgMhgQaMC3","placeholder":"欢迎和我留言♥"},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.7"},"waline":{"server_url":"https://waline-ebqlq2h6z-echoalways.vercel.app/","reaction":false,"version":2}},"post":{"author_label":{"enable":false,"auto":true,"custom_label_list":["Trainee","Engineer","Architect"]},"word_count":{"enable":false,"wordcount":false,"min2read":false},"img_align":"center","copyright_info":false,"share":true,"reward":{"enable":true,"img_link":"https://z1.ax1x.com/2023/10/03/pPLxvT0.jpg","text":"赞赏作者♥"}},"version":"3.5.2"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"};
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+                <a class="logo-image" href="/">
+                    <img src="/images/logo.png">
+                </a>
+            
+            <a class="logo-title" href="/">
+               愔颂
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               target="_blank" rel="noopener" href="https://www.xiaohongshu.com/user/profile/5dbc56e20000000001005c42"
+                            >
+                                相册
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       target="_blank" rel="noopener" href="https://www.xiaohongshu.com/user/profile/5dbc56e20000000001005c42">相册</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="post-page-container">
+        <div class="article-content-container">
+
+            <div class="article-title">
+                <span class="title-hover-animation">Gateway+JWT实现登录认证</span>
+            </div>
+
+            
+                <div class="article-header">
+                    <div class="avatar">
+                        <img src="https://s1.ax1x.com/2022/11/12/ziJjfK.jpg">
+                    </div>
+                    <div class="info">
+                        <div class="author">
+                            <span class="name">远岫</span>
+                            
+                        </div>
+                        <div class="meta-info">
+                            
+<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        
+            <i class="fa-regular fa-calendar-plus"></i>&nbsp;
+        
+        <span class="pc">2023-10-04 18:28:12</span>
+        <span class="mobile">2023-10-04 18:28</span>
+    </span>
+    
+        <span class="article-update-date article-meta-item">
+        <i class="fas fa-file-pen"></i>&nbsp;
+        <span class="pc">2023-10-04 18:31:06</span>
+    </span>
+    
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/">项目实战</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                        </div>
+                    </div>
+                </div>
+            
+
+            <div class="article-content keep-markdown-body">
+                <meta name="referrer" content="no-referrer"/>
+
+<p>微服务架构整合Spring Cloud Gateway网关和JWT Token实现登录认证。</p>
+<span id="more"></span>
+
+<h1 id="1、认证、授权、凭证"><a href="#1、认证、授权、凭证" class="headerlink" title="1、认证、授权、凭证"></a>1、认证、授权、凭证</h1><h2 id="1-1-认证（Authentication）"><a href="#1-1-认证（Authentication）" class="headerlink" title="1.1 认证（Authentication）"></a>1.1 认证（Authentication）</h2><p>认证表示你是谁。系统如何正确分辨出操作用户的真实身份，比如通过输入用户名和密码来辨别身份。</p>
+<h2 id="1-2-授权（Authorization）"><a href="#1-2-授权（Authorization）" class="headerlink" title="1.2 授权（Authorization）"></a>1.2 授权（Authorization）</h2><p>授权表示你能干什么。系统如何控制一个用户能看到哪些数据和操作哪些功能，也就是具有哪些权限。</p>
+<h2 id="1-3-凭证（Credential）"><a href="#1-3-凭证（Credential）" class="headerlink" title="1.3 凭证（Credential）"></a>1.3 凭证（Credential）</h2><p>表示你如何证明你的身份。系统如何保证它与用户之间的承诺是双方当时真实意图的体现，是准确、完整和不可抵赖的。</p>
+<p>关于凭证的存储方案，业界的安全架构中有两种方案：</p>
+<ol>
+<li>Cookie-Session 模式</li>
+<li>JWT 方案</li>
+</ol>
+<h3 id="1-3-1、Cookie-Session-模式"><a href="#1-3-1、Cookie-Session-模式" class="headerlink" title="1.3.1、Cookie-Session 模式"></a>1.3.1、Cookie-Session 模式</h3><p>如下图示：</p>
+<p><img  
+                     lazyload
+                     alt="image"
+                     data-src="https://cdn.nlark.com/yuque/0/2023/png/36098302/1695803598331-ae62b035-ebea-4bd1-a4ae-925d9d5fa3bf.png"
+                      alt="img"
+                ></p>
+<p><strong>优点：</strong></p>
+<p>状态信息都存储于服务器，只要依靠客户端的<a class="link"   target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Same-origin_policy" >同源策略<i class="fas fa-external-link-alt"></i></a>和 HTTPS 的传输层安全，保证 Cookie 中的键值不被窃取而出现被冒认身份的情况，就能完全规避掉上下文信息在传输过程中被泄漏和篡改的风险。</p>
+<p><strong>缺点：</strong></p>
+<p>在单节点的单体服务中再适合不过，但是如果需要水平扩展要部署集群就很麻烦。</p>
+<p>如果让 session 分配到不同的的节点上，不重复地保存着一部分用户的状态，用户的请求固定分配到对应的节点上，如果某个节点崩溃了，则里面的用户状态就会完全丢失。如果让 session 复制到所有节点上，那么同步的成本又会很高。</p>
+<h3 id="1-3-2、JWT方案"><a href="#1-3-2、JWT方案" class="headerlink" title="1.3.2、JWT方案"></a>1.3.2、JWT方案</h3><p>上面说到 Cookie-Session 机制在分布式环境下会遇到一致性和同步成本的问题，而且如果在多方系统中，则更不能将 Session 共享存放在多方系统的服务端中，即使服务端之间能共享数据，Cookie 也没有办法跨域。</p>
+<p>转换思路，服务端不保存任何状态信息，由客户端来存储，每次发送请求时携带这个状态信息发给后端服务。原理图如下所示：</p>
+<p><img  
+                     lazyload
+                     alt="image"
+                     data-src="https://cdn.nlark.com/yuque/0/2023/png/36098302/1695803973153-2016ad24-09e0-45a0-90ab-87f52cc8433b.png"
+                      alt="img"
+                ></p>
+<p>JWT（JSON WEB TOKEN）是一种令牌格式，经常与 OAuth2.0 配合应用于分布式、多方的应用系统中。</p>
+<p>我们先来看下 JWT 的格式长什么样：</p>
+<p><img  
+                     lazyload
+                     alt="image"
+                     data-src="https://cdn.nlark.com/yuque/0/2023/png/36098302/1695804115939-5a9bf903-76d2-40ea-bb8f-ff71f4331ead.png"
+                      alt="img"
+                ></p>
+<p>左边的字符串就是 JWT 令牌，JWT 令牌是服务端生成的，客户端会拿着这个 JWT 令牌在每次发送请求时放到 HTTP header 中。</p>
+<p>而右边是 JWT 经过 Base64 解码后展示的明文内容，而这段明文内容的最下方，又有一个签名内容，可以防止内容篡改，但是不能解决泄漏的问题。</p>
+<p><a target="_blank" rel="noopener" href="http://www.passjava.cn/#/02.SpringCloud/06.Gateway%E7%BD%91%E5%85%B3/03.%E5%94%90%E7%8E%84%E5%A5%98%E6%8A%8AJWT%E4%BB%A4%E7%89%8C%E7%8E%A9%E5%88%B0%E4%BA%86%E6%9C%BA%E5%88%B6?id=jwt-%E6%A0%BC%E5%BC%8F"><strong>JWT 格式</strong></a></p>
+<p>JWT 令牌是以 JSON 结构存储，用点号分割为三个部分。</p>
+<p><img  
+                     lazyload
+                     alt="image"
+                     data-src="https://cdn.nlark.com/yuque/0/2023/png/36098302/1695804211933-ba1c9872-9151-4b71-8a6e-bed30c472756.png"
+                      alt="img"
+                ></p>
+<p>第一部分是<strong>令牌头</strong>（Header），内容如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;alg&quot;: &quot;HS256&quot;,</span><br><span class="line">  &quot;typ&quot;: &quot;JWT&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>它描述了令牌的类型（统一为 typ:JWT）以及令牌签名的算法，示例中 HS256 为 HMAC SHA256 算法的缩写<a class="link"   target="_blank" rel="noopener" href="https://jwt.io/%E7%BD%91%E7%AB%99%E6%89%80%E5%88%97%E3%80%82" >。<i class="fas fa-external-link-alt"></i></a></p>
+<p>令牌的第二部分是<strong>负载</strong>（Payload），这是令牌是真正需要向服务端传递的信息。但是服务端不会直接用这个负载，而是通过加密传过来的 Header 和 Payload 后再比对签名是否一致来判断负载是否被篡改，如果没有被篡改，才能用 Payload 中的内容。因为负载只是做了 base64 编码，并不是加密，所以是不安全的，千万别把敏感信息比如密码放到负载里面。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;sub&quot;: &quot;passjava&quot;,</span><br><span class="line">  &quot;name&quot;: &quot;悟空聊架构&quot;,</span><br><span class="line">  &quot;iat&quot;: 1516239022</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>令牌的第三部分是<strong>签名</strong>（Signature），使用在对象头中公开的特定签名算法，通过特定的密钥（Secret，由服务器进行保密，不能公开）对前面两部分内容进行加密计算，以例子里使用的 JWT 默认的 HMAC SHA256 算法为例，将通过以下公式产生签名值：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HMACSHA256(base64UrlEncode(header) + &quot;.&quot; + base64UrlEncode(payload) , secret)</span><br></pre></td></tr></table></figure>
+
+<p><strong>签名的意义</strong>：确保负载中的信息是可信的、没有被篡改的，也没有在传输过程中丢失任何信息。因为被签名的内容哪怕发生了一个字节的变动，也会导致整个签名发生显著变化。此外，由于签名这件事情只能由认证授权服务器完成（只有它知道 Secret），任何人都无法在篡改后重新计算出合法的签名值，所以服务端才能够完全信任客户端传上来的 JWT 中的负载信息。</p>
+<p><strong>JWT 的优势</strong></p>
+<ul>
+<li><strong>无状态</strong>：不需要服务端保存 JWT 令牌，也就是说不需要服务节点保留任何一点状态信息，就能在后续的请求中完成认证功能。</li>
+<li><strong>天然的扩容便利</strong>：服务做水平扩容不用考虑 JWT 令牌，而 Cookie-Session 是需要考虑扩容后服务节点如何存储 Session 的。</li>
+<li><strong>不依赖 Cookie</strong>：JWT 可以存放在浏览器的 LocalStorage，不一定非要存储在 Cookie 中。</li>
+</ul>
+<p><strong>JWT 的劣势</strong></p>
+<ul>
+<li><strong>令牌难以主动失效</strong>：JWT 令牌签发后，理论上和认证的服务器就没有什么关系了，到期之前始终有效。除非服务器加些特殊的逻辑处理来缓存 JWT，并来管理 JWT 的生命周期，但是这种方式又会退化成有状态服务。而这种要求有状态的需求又很常见：譬如用户退出后，需要重新输入用户名和密码才能登录；或者用户只允许在一台设备登录，登录到另外一台设备，要求强行退出。但是这种有状态的模式，降低了 JWT 本身的价值。</li>
+<li><strong>更容易遭受重放攻击</strong>：Cookie-Session 也有重放攻击的问题，也就是客户端可以拿着这个 cookie 不断发送大量请求，对系统性能造成影响。但是因为 Session 在服务端也有一份，服务端可以控制 session 的生命周期，应对重放攻击更加主动一些。但是 JWT 的重放攻击对于服务端来说就很被动，比如通过客户端的验证码、服务端限流或者缩短令牌有效期，应用起来都会麻烦些。</li>
+<li><strong>存在泄漏的风险</strong>：客户端存储，很有可能泄漏出去，被其他人重复利用。</li>
+<li><strong>信息大小有限</strong>：HTTP 协议并没有强制约束 Header 的最大长度，但是服务器、浏览器会做限制。而且如果令牌很大还会消耗传输带宽。</li>
+</ul>
+<h1 id="2、认证原理图"><a href="#2、认证原理图" class="headerlink" title="2、认证原理图"></a>2、认证原理图</h1><p>在如下的认证时序图中，有以下几种角色：</p>
+<ul>
+<li><strong>客户端</strong>：表示 APP 端或 PC 端的前端页面。</li>
+<li><strong>网关</strong>：表示 Spring Cloud Gateway 网关服务。</li>
+<li><strong>认证服务</strong>：用来接收客户的登录请求、登出请求、刷新令牌的操作。</li>
+<li><strong>业务服务</strong>：和系统业务相关的微服务。</li>
+</ul>
+<p>认证和校验身份的流程如下所示：</p>
+<p><img  
+                     lazyload
+                     alt="image"
+                     data-src="https://cdn.nlark.com/yuque/0/2023/png/36098302/1695805036897-0032b949-bd17-47f1-8f85-5cbfdcbcaf6e.png"
+                      alt="img"
+                ></p>
+<p>① <strong>用户登录</strong>：客户端在登录页面输入用户名和密码，提交表单，调用登录接口。</p>
+<p>② <strong>转发请求</strong>：这里会先将登录请求发送到网关服务 passjava-gateway，网关对于登录请求会直接转发到认证服务 passjava-auth。（网关对登录请求不做 token 校验，这个可以配置不校验哪些请求 URL）</p>
+<p>③ <strong>认证</strong>：认证服务会将请求参数中的用户名+密码和数据库中的用户进行比对，如果完全匹配，则认证通过。</p>
+<p>④ <strong>生成令牌</strong>：生成两个令牌：access_token 和 refresh_token（刷新令牌），刷新令牌我们后面再说，这里其实也可以只用生成一个令牌 access_token。令牌里面会包含用户的身份信息，<strong>如果要做权限管控</strong>，还需要在 token 里面包含用户的权限信息，权限这一块不在本篇展开，会放到下一篇中进行讲解。</p>
+<p>⑤ <strong>客户端缓存 token</strong>：客户端拿到两个 token 缓存到 cookie 中或者 LocalStorage 中。</p>
+<p>⑥ <strong>携带 token 发起请求</strong>：客户端下次想调用业务服务时，将 access_token 放到请求的 header 中。</p>
+<p>⑦ <strong>网关校验 token</strong>：请求还是先到到网关服务，然后由它校验 access_token 是否合法。如果 access_token 未过期，且能正确解析出来，就说明是合法的 access_token。</p>
+<p>⑧ <strong>携带用户身份信息转发请求</strong>：网关将 access_token 中携带的用户的 user_id 放到请求的 header 中，转发给真正的业务服务。</p>
+<p>⑨ <strong>处理业务逻辑</strong>：业务服务从 header 中拿到用户的 user_id，然后处理业务逻辑，处理完后将结果延原理返回给客户端。</p>
+<h1 id="3、实现细节"><a href="#3、实现细节" class="headerlink" title="3、实现细节"></a>3、实现细节</h1><p>更多细节见：<a class="link"   target="_blank" rel="noopener" href="http://www.passjava.cn/#/02.SpringCloud/06.Gateway%E7%BD%91%E5%85%B3/04.%E5%AE%9E%E6%88%98SpringCloud+JWT%E8%AE%A4%E8%AF%81" >实战SpringCloud gateway+JWT认证<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="3-1、如何做登录认证"><a href="#3-1、如何做登录认证" class="headerlink" title="3.1、如何做登录认证"></a>3.1、如何做登录认证</h2><p> <img  
+                     lazyload
+                     alt="image"
+                     data-src="https://cdn.nlark.com/yuque/0/2023/png/36098302/1695806266200-abb4a4b7-fa51-4070-bf5a-5339c77599c1.png"
+                      alt="img"
+                ></p>
+<p>步骤：</p>
+<ol>
+<li>提交用户名和密码</li>
+<li>网关服务转发登录请求</li>
+<li>数据库查找用户密码，验证成功后生成JWT令牌</li>
+</ol>
+<h2 id="3-2、如何生成令牌"><a href="#3-2、如何生成令牌" class="headerlink" title="3.2、如何生成令牌"></a>3.2、如何生成令牌</h2><p>生成令牌就是通过工具类 PassJavaJwtTokenUtil 生成 JWT Token。</p>
+<h2 id="3-3、如何携带JWT发送请求"><a href="#3-3、如何携带JWT发送请求" class="headerlink" title="3.3、如何携带JWT发送请求"></a>3.3、如何携带JWT发送请求</h2><p><img  
+                     lazyload
+                     alt="image"
+                     data-src="https://cdn.nlark.com/yuque/0/2023/png/36098302/1695806614615-47aa71bc-57ab-4508-ab3b-fb79a45f9551.png"
+                      alt="img"
+                ></p>
+<p>客户端（浏览器或 APP）拿到 JWT 后，可以将 JWT 存放在浏览器的 Cookie 或 LocalStorage（本地存储） 或者内存中。</p>
+<p>发送请求时在请求 Header 的 Authorization 字段中设置 JWT。</p>
+<h2 id="3-4、网关如何验证和转发请求"><a href="#3-4、网关如何验证和转发请求" class="headerlink" title="3.4、网关如何验证和转发请求"></a>3.4、网关如何验证和转发请求</h2><p><img  
+                     lazyload
+                     alt="image"
+                     data-src="https://cdn.nlark.com/yuque/0/2023/png/36098302/1695806760969-b89c771a-4804-46c9-90c7-ebe73bfab130.png"
+                      alt="img"
+                ></p>
+<p>网关接收到前端发起的业务请求后，会先验证请求的 Header 中是否携带 Authorization 字段，以及里面的 Token 是否合法。然后解析 Token 中的 userId 和 username，放到 header 中再进行转发。</p>
+<p>网关是通过多个过滤器 Filter对请求进行串行拦截处理的，所以我们可以自定义一个全局过滤器，对所有请求进行校验，当然对于一些特殊请求比如登录请求就不需要校验了，因为调用登录请求的时候还没有生成 Token。</p>
+<p><img  
+                     lazyload
+                     alt="image"
+                     data-src="https://cdn.nlark.com/yuque/0/2023/png/36098302/1695806830484-93a15b7a-a18b-461d-8f1c-66a2a347355d.png"
+                      alt="img"
+                ></p>
+<h2 id="3-5、会员业务逻辑处理"><a href="#3-5、会员业务逻辑处理" class="headerlink" title="3.5、会员业务逻辑处理"></a>3.5、会员业务逻辑处理</h2><p>会员服务接收到网关转发的请求后，就从 Header 中拿到用户身份信息，然后通过 userId 获取会员信息。</p>
+<p>获取 userId 的方式其实可以通过加一个拦截器，由拦截器将 Header 中的 userId 和 username 放到线程中，后续的 controller，service，dao 类都可以从线程里面拿到 userId 和 username，不用通过传参的方式。</p>
+<p>获取 userId 的方式：</p>
+<ul>
+<li>方式一：从 request 的 Header 中拿到 userId。代码简单，但是如果其他地方也要用到 userId，则需要通过方法传参的方式传递 userId。</li>
+<li>方式二：从线程变量里面拿到 userId。代码复杂，使用简单。好处是所有地方统一从一个地方获取。</li>
+</ul>
+<h2 id="3-6、如何刷新令牌"><a href="#3-6、如何刷新令牌" class="headerlink" title="3.6、如何刷新令牌"></a>3.6、如何刷新令牌</h2><p>当认证服务返回给客户端的 JWT 也就是 access_token 过期后，客户端是通过发送登录请求重新拿到 access_token 吗？</p>
+<p>这种重新登录的操作如果很频繁（因 JWT 过期时间较短），对于用户来说体验就很差了。客户端需要跳转到登录页面，让用户重新提交用户名和密码，即使客户端有记住用户名和密码，但是这种跳转的到登录页的操作会大幅度降低用户的体验。</p>
+<p><strong>有没有一种比较优雅的方式让客户端重新拿到 access_token 或者说延长 access_token 有效期呢？</strong></p>
+<p>我们知道 JWT 生成后是不能篡改里面的内容，即使是 JWT 的有效期也不行。所以延长 access_token 有效期的做法并不适合，而且如果长期保持一个 access_token 有效，也是不安全的。</p>
+<p>那就只能重新生成 access_token 了。方案其实挺简单，客户端拿之前生成的 JWT 调用后端一个接口，然后后端校验这个 JWT 是否合法，如果是合法的就重新生成一个新的返回给客户端。客户端自行替换掉之前本地保存的 access_token 就可以了。</p>
+<p><img  
+                     lazyload
+                     alt="image"
+                     data-src="https://cdn.nlark.com/yuque/0/2023/png/36098302/1695807139680-723cc36a-b60e-4d53-a3a9-cbd659e0d896.png"
+                      alt="img"
+                ></p>
+<p>这里有一个巧妙的设计，就是生成 JWT 时，返回了两个 JWT token，一个 access_token，一个 refresh_token，这两个 token 其实都可以用来刷新 token，但是我们把 refresh_token 设置的过期时间稍微长一点，比如两倍于 access_token，当 access_token 过期后，refresh_token 如果还没有过期，<strong>就可以利用两者的过期时间差进行重新生成令牌的操作</strong>，也就是刷新令牌，这里的刷新指的是客户端重置本地保存的令牌，以后都用新的令牌。</p>
+<p>总结：</p>
+<p>在登录认证中，刷新令牌和设置过期重登是常见的安全机制，用于保证用户的登录状态和防止令牌被滥用。下面是一种常见的实现方式：</p>
+<ol>
+<li><p>生成令牌和刷新令牌：</p>
+<p>- 在用户登录成功后，生成一个访问令牌（access token）和一个刷新令牌（refresh token）。</p>
+<p>- 访问令牌用于验证用户的身份和访问权限，通常具有较短的有效期。</p>
+<p>- 刷新令牌用于在访问令牌过期时获取新的访问令牌，通常具有较长的有效期。</p>
+</li>
+<li><p>访问令牌的验证：</p>
+<p>- 在每个请求中，服务端需要验证访问令牌的有效性。</p>
+<p>- 可以通过在请求头或请求参数中携带访问令牌，并在服务端进行解析和验证。</p>
+<p>- 如果访问令牌已过期或无效，服务端会返回相应的错误响应。</p>
+</li>
+<li><p>刷新令牌的使用：</p>
+<p>- 当访问令牌过期时，客户端可以使用刷新令牌来获取新的访问令牌。</p>
+<p>- 客户端发送一个特殊的请求，携带刷新令牌。</p>
+<p>- 服务端验证刷新令牌的有效性，并根据刷新令牌颁发一个新的访问令牌。</p>
+</li>
+<li><p>设置过期重登：</p>
+<p>- 如果用户长时间不活动或注销登录，访问令牌会过期失效。</p>
+<p>- 当用户再次访问需要登录的接口时，服务端会返回一个需要重新登录的错误响应。</p>
+<p>- 客户端收到该错误响应后，需要引导用户重新进行登录认证。</p>
+</li>
+</ol>
+<p>通过刷新令牌和设置过期重登的机制，可以在保证用户登录状态的同时，提高系统的安全性。请注意，具体的实现方式可能会根据实际情况和框架的不同而有所差异。</p>
+
+            </div>
+
+            
+
+            
+
+            
+                <div class="article-nav">
+                    
+                        <div class="article-prev">
+                            <a class="prev"
+                               rel="prev"
+                               href="/2023/10/04/Redis%E5%AE%9E%E7%8E%B0%E6%8E%92%E8%A1%8C%E6%A6%9C/"
+                            >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                                <span class="title flex-center">
+                                <span class="post-nav-title-item">Redis实现排行榜</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                            </a>
+                        </div>
+                    
+                    
+                        <div class="article-next">
+                            <a class="next"
+                               rel="next"
+                               href="/2023/10/04/Easy-RPC%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/"
+                            >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Easy-RPC框架实现</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                                <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                            </a>
+                        </div>
+                    
+                </div>
+            
+
+            
+                <div class="comment-container">
+                    
+<div class="comments-container">
+    <div id="comments-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments"></i>&nbsp;评论
+    </div>
+    
+        
+            
+
+    <div class="valine-container">
+        <script  src="//cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+          function loadValine() {
+            new Valine({
+              el: '#vcomments',
+              appId: 'ZUKsDiFCHfBxuQFnh1UC5l7P-MdYXbMMI',
+              appKey: 'jQHh3ynQ7pckO3cgMhgQaMC3',
+              meta: ['nick', 'mail', 'link'],
+              avatar: 'wavatar',
+              enableQQ: true,
+              placeholder: '欢迎和我留言♥',
+              lang: 'zh-CN'.toLowerCase()
+            });
+
+            function getAuthor(language) {
+              switch (language) {
+                case 'en':
+                  return 'Author';
+                case 'zh-CN':
+                  return '博主';
+                default:
+                  return 'Master';
+              }
+            }
+
+            // Add "Author" identify
+            const getValineDomTimer = setInterval(() => {
+              const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+              if (vcards.length > 0) {
+                let author = '远岫';
+
+                if (author) {
+                  for (let vcard of vcards) {
+                    const vnick_dom = vcard.querySelector('.vhead .vnick');
+                    const vnick = vnick_dom.innerHTML;
+                    if (vnick === author) {
+                      vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                    }
+                  }
+                }
+                clearInterval(getValineDomTimer);
+              } else {
+                clearInterval(getValineDomTimer);
+              }
+            }, 2000);
+          }
+
+          if ('false' === 'true') {
+            const loadValineTimeout = setTimeout(() => {
+              loadValine();
+              clearTimeout(loadValineTimeout);
+            }, 1000);
+          } else {
+            window.addEventListener('DOMContentLoaded', loadValine);
+          }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+                </div>
+            
+        </div>
+
+        
+            <div class="toc-content-container">
+                <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1%E3%80%81%E8%AE%A4%E8%AF%81%E3%80%81%E6%8E%88%E6%9D%83%E3%80%81%E5%87%AD%E8%AF%81"><span class="nav-text">1、认证、授权、凭证</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-%E8%AE%A4%E8%AF%81%EF%BC%88Authentication%EF%BC%89"><span class="nav-text">1.1 认证（Authentication）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-%E6%8E%88%E6%9D%83%EF%BC%88Authorization%EF%BC%89"><span class="nav-text">1.2 授权（Authorization）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-%E5%87%AD%E8%AF%81%EF%BC%88Credential%EF%BC%89"><span class="nav-text">1.3 凭证（Credential）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-1%E3%80%81Cookie-Session-%E6%A8%A1%E5%BC%8F"><span class="nav-text">1.3.1、Cookie-Session 模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-2%E3%80%81JWT%E6%96%B9%E6%A1%88"><span class="nav-text">1.3.2、JWT方案</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2%E3%80%81%E8%AE%A4%E8%AF%81%E5%8E%9F%E7%90%86%E5%9B%BE"><span class="nav-text">2、认证原理图</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3%E3%80%81%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82"><span class="nav-text">3、实现细节</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1%E3%80%81%E5%A6%82%E4%BD%95%E5%81%9A%E7%99%BB%E5%BD%95%E8%AE%A4%E8%AF%81"><span class="nav-text">3.1、如何做登录认证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2%E3%80%81%E5%A6%82%E4%BD%95%E7%94%9F%E6%88%90%E4%BB%A4%E7%89%8C"><span class="nav-text">3.2、如何生成令牌</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3%E3%80%81%E5%A6%82%E4%BD%95%E6%90%BA%E5%B8%A6JWT%E5%8F%91%E9%80%81%E8%AF%B7%E6%B1%82"><span class="nav-text">3.3、如何携带JWT发送请求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4%E3%80%81%E7%BD%91%E5%85%B3%E5%A6%82%E4%BD%95%E9%AA%8C%E8%AF%81%E5%92%8C%E8%BD%AC%E5%8F%91%E8%AF%B7%E6%B1%82"><span class="nav-text">3.4、网关如何验证和转发请求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-5%E3%80%81%E4%BC%9A%E5%91%98%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91%E5%A4%84%E7%90%86"><span class="nav-text">3.5、会员业务逻辑处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-6%E3%80%81%E5%A6%82%E4%BD%95%E5%88%B7%E6%96%B0%E4%BB%A4%E7%89%8C"><span class="nav-text">3.6、如何刷新令牌</span></a></li></ol></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            
+<footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+                <span>2022</span> -
+            
+            2023
+            
+                &nbsp;<i class="fas fa-heart icon-animate"></i>
+                &nbsp;<a href="/">远岫</a>
+            
+        </div>
+        
+            <script async 
+                    src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                    访问人数&nbsp;<span id="busuanzi_value_site_uv"></span>&ensp;
+                
+                
+                    总访问量&nbsp;<span id="busuanzi_value_site_pv"></span>
+                
+            </div>
+        
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="tools-item flex-center go-to-comments">
+                <i class="fas fa-comment"></i>
+                <span class="post-comments-count"></span>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/js/main.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/js/header-shrink.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/js/back2top.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/js/dark-light-toggle.js"></script>
+
+
+
+
+    <script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/js/local-search.js"></script>
+
+
+
+    <script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/js/code-block.js"></script>
+
+
+
+    <script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/js/lazyload.js"></script>
+
+
+<div class="post-scripts">
+    
+        <script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/js/post-helper.js"></script>
+        
+            <script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/js/libs/anime.min.js"></script>
+        
+        
+            <script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/js/toc.js"></script>
+        
+    
+</div>
+
+
+
+</body>
+</html>

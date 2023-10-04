@@ -9,7 +9,7 @@
     
     <title>
         
-            木心诗二三句 |
+            NodeJs&amp;Vue安装配置教程 |
         
         愔颂
     </title>
@@ -184,7 +184,7 @@
         <div class="article-content-container">
 
             <div class="article-title">
-                <span class="title-hover-animation">木心诗二三句</span>
+                <span class="title-hover-animation">NodeJs&amp;Vue安装配置教程</span>
             </div>
 
             
@@ -204,13 +204,13 @@
         
             <i class="fa-regular fa-calendar-plus"></i>&nbsp;
         
-        <span class="pc">2020-06-12 20:35:14</span>
-        <span class="mobile">2020-06-12 20:35</span>
+        <span class="pc">2023-10-03 21:12:00</span>
+        <span class="mobile">2023-10-03 21:12</span>
     </span>
     
         <span class="article-update-date article-meta-item">
         <i class="fas fa-file-pen"></i>&nbsp;
-        <span class="pc">2022-11-13 21:02:26</span>
+        <span class="pc">2023-10-04 10:25:43</span>
     </span>
     
     
@@ -219,7 +219,7 @@
             <ul>
                 
                     <li>
-                        <a href="/categories/%E8%AF%97%E6%AD%8C%E6%89%8B%E8%AE%B0/">诗歌手记</a>&nbsp;
+                        <a href="/categories/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E6%95%99%E7%A8%8B/">环境配置教程</a>&nbsp;
                     </li>
                 
             </ul>
@@ -243,226 +243,83 @@
             
 
             <div class="article-content keep-markdown-body">
-                <p>木心的诗，感觉语言上特别有古意与情味，其诗描写故景往事者读之令人口齿含香，即刻诵之。今日夏初梅雨，摘之二三，与时消夏。</p>
+                <meta name="referrer" content="no-referrer"/>
+
+<p>NodeJs安装、Vue安装、前端工程部署环境配置教程。</p>
 <span id="more"></span>
 
-<center>
-
-<h2 id="少年朝食"><a href="#少年朝食" class="headerlink" title="少年朝食"></a>少年朝食</h2><center>
-    清早阳光<br>
-    照明高墙一角<br>
-    喜鹊喀喀叫<br>
-    天井花坛葱茏<br>
-    丫鬟悄声报用膳<br>
-    紫檀圆桌<br>
-    四碟端陈<br>
-    姑苏酱鸭<br>
-    平湖糟蛋<br>
-    撕蒸笋<br>
-    豆干末子拌马兰头<br>
-    莹白的暖暖香粳米粥<br>
-    没有比粥更温柔的了<br>
-    东坡、剑南皆嗜粥<br>
-    念予毕生流离红尘<br>
-    就找不到一个似粥温柔之人<br>
-    吁，予仍频忆江南古镇<br>
-    梁昭明太子读书于我家后园<br>
-    窗前的银杏树是六朝之前的<br>
-    昔南塘春半、风和马嘶<br>
-    日长无事蝴蝶飞<br>
-</center>
-
-
-<h2 id="大卫"><a href="#大卫" class="headerlink" title="大卫"></a>大卫</h2><center>
-莫倚偎我<br>
-我习于冷<br>
-志于成冰<br>
-莫倚偎我<br>
-别走近我<br>
-我正升焰<br>
-万木俱焚<br>
-别走近我<br>
-</center>
+<h1 id="一、安装Node-js"><a href="#一、安装Node-js" class="headerlink" title="一、安装Node.js"></a>一、安装Node.js</h1><p><strong>1、下载</strong></p>
+<p><a class="link"   target="_blank" rel="noopener" href="http://nodejs.cn/download/" >Node.js官网下载<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>2、安装</strong></p>
+<p>一路Next，默认安装即可。</p>
+<p><img  
+                     lazyload
+                     alt="image"
+                     data-src="https://cdn.nlark.com/yuque/0/2023/png/36098302/1695090842497-017de0e5-34fb-4659-8a80-200d095c285e.png"
+                      alt="img"
+                ></p>
+<p><img  
+                     lazyload
+                     alt="image"
+                     data-src="https://cdn.nlark.com/yuque/0/2023/png/36098302/1695090862055-a40f5bd2-e535-4890-8e9a-fe32dd90a683.png"
+                      alt="img"
+                ></p>
+<p>finish！</p>
+<p>安装完成后，检查一下是否安装成功。</p>
+<p>打开cmd，输入如下指令，输出对应版本即安装成功。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">node -v</span><br><span class="line">npm -v</span><br><span class="line">1</span><br></pre></td></tr></table></figure>
 
 
 
+<h1 id="二、创建全局安装和缓存目录"><a href="#二、创建全局安装和缓存目录" class="headerlink" title="二、创建全局安装和缓存目录"></a>二、创建全局安装和缓存目录</h1><p>在我们的安装目录下，创建名为node_cache和node_global的两个文件夹。</p>
+<p><img  
+                     lazyload
+                     alt="image"
+                     data-src="https://cdn.nlark.com/yuque/0/2023/png/36098302/1695091015251-f4aea741-76ba-402c-844f-b1a65e5ceabe.png"
+                      alt="img"
+                ></p>
+<p>打开cmd窗口，执行如下命令，将npm的全局模块目录和缓存目录配置到我们刚才创建的那两个目录。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm config set prefix &quot;D:\DevelopingEnvironment\nodejs\node_global&quot;</span><br><span class="line">npm config set cache &quot;D:\DevelopingEnvironment\nodejs\node_cache&quot;</span><br></pre></td></tr></table></figure>
 
+<p>为了以后下载包快速，修改源为淘宝镜像。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm config set registry https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
 
-<h2 id="清嘉录"><a href="#清嘉录" class="headerlink" title="清嘉录"></a>清嘉录</h2><center>
-**其一**
-<br>
-平明舟出山庄<br>
-万枝垂柳，烟雨迷茫<br>
-回眺岸上土屋亦如化境<br>
-舟子挽纤行急<br>
-误窜层网中，遂致勃谿<br>
-登岸相劝，几为乡人窘<br>
-偿以百钱，始悻悻散<br>
-    <br>
-行百余里，滩险日暮<br>
-约去港口数里以泊<br>
-江潮大来，荻芦如雪<br>
-肃肃与风相抟<br>
-是夕正望，月似紫铜盘<br>
-水势益长，澎湃声起<br>
-俄闻金山蒲牢动，漏下矣<br>
-    <br>
-**其二**
-<br>
-梅雨时备缸瓮收旧雨水<br>
-供烹茶，曰梅水<br>
-梅天多雨，雨水极佳<br>
-贮之味经年不变<br>
-人于初交黄梅时收雨<br>
-以其甘滑胜山泉<br>
-</center>
-
-<p>​    </p>
-<h2 id="从前慢"><a href="#从前慢" class="headerlink" title="从前慢"></a>从前慢</h2><center>
-记得早先少年时<br>
-大家诚诚恳恳<br>
-说一句是一句<br>
-清早上火车站<br>
-长街黑暗无行人<br>
-卖豆浆的小店冒着热气<br>
-    <br>
-从前的日色变得慢<br>
-车、马、邮件都慢<br>
-一生只够爱一个人<br>
-    <br>
-从前的锁也好看<br>
-钥匙精美有样子<br>
-你锁了，人家就懂了<br>
-</center>
+<p>查看npm配置修改是否成功</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm config list</span><br></pre></td></tr></table></figure>
 
 
 
+<h1 id="三、配置环境变量"><a href="#三、配置环境变量" class="headerlink" title="三、配置环境变量"></a>三、配置环境变量</h1><p>在安装过程中，自动配置了两个环境变量，一个是环境变量—用户变量—Path里面的<code>C:\Users\你的用户名\AppData\Roaming\npm</code>，另一个是环境变量—系统变量—Path里面的软件安装目录，我们需要增加和修改一下。</p>
+<p>1、环境变量—用户变量—选中Path—点编辑，将<code>C:\Users\你的用户名\AppData\Roaming\npm</code>修改为 <code>你的安装目录\node_global</code></p>
+<p><img  
+                     lazyload
+                     alt="image"
+                     data-src="https://cdn.nlark.com/yuque/0/2023/png/36098302/1695091811819-9fc706a2-32d1-4539-9b5f-38c01a804b4e.png"
+                      alt="img"
+                ></p>
+<p>2、系统变量—Path添加node_global路径，和nodejs环境变量（默认安装时已加上）</p>
+<p><img  
+                     lazyload
+                     alt="image"
+                     data-src="https://cdn.nlark.com/yuque/0/2023/png/36098302/1695091613307-6880a11c-bb6a-4d2d-b1ec-f9d8357541c3.png"
+                      alt="img"
+                ></p>
+<h1 id="三、安装vue"><a href="#三、安装vue" class="headerlink" title="三、安装vue"></a>三、安装vue</h1><p>1、安装vue.js</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm install vue -g</span><br><span class="line">npm install vue-cli -g</span><br><span class="line">npm install vue-router -g</span><br></pre></td></tr></table></figure>
 
-<h2 id="魏玛早春"><a href="#魏玛早春" class="headerlink" title="魏玛早春"></a>魏玛早春</h2><center>
-有一株树<br>
-曾见一株这样的树<br>
-冬季晴和了几天<br>
-不觉彤云叆叇<br>
-万千乌鸦出林<br>
-聒鸣飞旋<br>
-乡民谓之噪雪<br>
-称彤云为酿雪<br>
-风凛冽<br>
-行人匆匆回家<br>
-曾见一株树在这样的时日<br>
-枝头齐茁蓓蕾<br>
-淡绛的星星点点密布楂条<br>
-长势迅速梢端尤累累若不胜载<br>
-际此霙雪纷纷下<br>
-无数花苞仰雪绽放<br>
-雪片愈大愈紧<br>
-群花朵朵舒展<br>
-树高十米<br>
-干围一点五米<br>
-叶如樟似杨<br>
-顶冠直径十余米<br>
-花状类乎扶桑之樱<br>
-色与雪同<br>
-吐香清馥<br>
-冬季中下几遭雪<br>
-发几度花<br>
-霰霙之夕<br>
-寂然不应<br>
-初雪之顷无气息<br>
-四野积雪丰厚<br>
-便闲幽馨流播<br>
-昼夜氤氲<br>
-雪销<br>
-花凋谢<br>
-植物志上没有这株树的学名<br>
-中国洞庭湖之南湘省 洞口县 水口山<br>
-树在那里已两百多年<br>
-</center>
+<p>其中-g是全局安装，指安装到global全局目录去，如果不加-g，模块就会安装到当前路径下的node_modules文件夹下，没有目录则自动创建。</p>
+<p>输入<code>vue -V</code>查看安装结果。</p>
+<p>注：管理员权限打开cmd窗口执行</p>
+<p>2、安装webpack模板</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install webpack -g</span><br></pre></td></tr></table></figure>
 
+<p>此外，在webpack 4x以上，webpack将命令相关的内容都放到了webpack-cli，所以还需要安装webpack-cli</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install webpack-cli -g</span><br></pre></td></tr></table></figure>
 
+<p>输入 <code>webpack -v</code> 查看安装结果。</p>
+<p>参考：</p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://blog.csdn.net/zhu_liu_kun/article/details/130616720" >https://blog.csdn.net/zhu_liu_kun/article/details/130616720<i class="fas fa-external-link-alt"></i></a></p>
 
-<h2 id="爪哇国"><a href="#爪哇国" class="headerlink" title="爪哇国"></a>爪哇国</h2><center>
-从前的人真有趣<br>
-他们要形容荒唐<br>
-便说“一错错到了爪哇国”<br>
-他们以为爪哇是最远的了<br>
-你想明朝人有多可爱<br>
-</center>
-
-
-
-
-<h2 id="如偈"><a href="#如偈" class="headerlink" title="如偈"></a>如偈</h2><center>
-晚晴风光好<br>
-大梦觉犹眠<br>
-每忆儿时景<br>
-莲叶何田田<br>
-</center>
-
-
-
-
-<h2 id="谑庵片简"><a href="#谑庵片简" class="headerlink" title="谑庵片简"></a>谑庵片简</h2><center>
-隆恩寺无他奇<br>
-独大会明堂百余丈<br>
-可玩月<br>
-径下有云深庵<br>
-五月，啖其樱桃<br>
-八月，落其苹果<br>
-樱桃人啖后百鸟俱来<br>
-绿羽翠翎者，白身朱咮者<br>
-嘈嘈各呈妙音<br>
-</center>
-
-
-
-
-<h2 id="京师五月"><a href="#京师五月" class="headerlink" title="京师五月"></a>京师五月</h2><center>
-石榴花正开<br>
-照眼鲜明<br>
-居人每与夹竹桃列中庭<br>
-榴竹之间，配以鱼缸<br>
-朱鳞数尾游漾其中<br>
-几于家家如此<br>
-</center>
-
-
-
-
-<h2 id="我"><a href="#我" class="headerlink" title="我"></a>我</h2><center>
-我是一个在黑暗中大雪纷飞的人哪<br>
-</center>
-
-
-
-
-<h2 id="浣花溪归"><a href="#浣花溪归" class="headerlink" title="浣花溪归"></a>浣花溪归</h2><center>
-出成都门<br>
-左万里桥<br>
-西折，溪流纤秀长曲<br>
-如连环，如玦色<br>
-如鉴，如琅玕<br>
-窈然深碧<br>
-潆回城下<br>
-皆浣花溪之委也<br>
-</center>
-
-
-
-
-<h2 id="夏日山居"><a href="#夏日山居" class="headerlink" title="夏日山居"></a>夏日山居</h2><center>
-遍地悬铃木<br>
-树叶杂花横生<br>
-紫檀，木兰，石榴<br>
-扇形的棕榈<br>
-油润润的乌柏<br>
-<br>
-朝暾初升<br>
-小丘上阳光已很强烈<br>
-芬芳的雾闪着兰晕<br>
-林薮蓊郁，群峦后<br>
-终年积雪的巍巍高峰<br>
-</center>
             </div>
 
             
@@ -475,13 +332,13 @@
                         <div class="article-prev">
                             <a class="prev"
                                rel="prev"
-                               href="/2020/11/12/2020-11-12-%E6%81%AD%E7%8E%8B%E5%BA%9C%E8%8A%B1%E5%9B%AD%E6%B8%B8%E8%AE%B0/"
+                               href="/2023/10/04/Nacos%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/"
                             >
                             <span class="left arrow-icon flex-center">
                               <i class="fas fa-chevron-left"></i>
                             </span>
                                 <span class="title flex-center">
-                                <span class="post-nav-title-item">恭王府花园游记</span>
+                                <span class="post-nav-title-item">Nacos使用笔记</span>
                                 <span class="post-nav-item">上一篇</span>
                             </span>
                             </a>
@@ -491,10 +348,10 @@
                         <div class="article-next">
                             <a class="next"
                                rel="next"
-                               href="/2020/05/12/2020-05-12-%E8%AF%BB%E3%80%8A%E7%90%85%E5%AC%9B%E6%96%87%E9%9B%86%E3%80%8B%E5%BD%95/"
+                               href="/2023/10/03/Spring-Cloud-Gateway%E8%AF%A6%E8%A7%A3/"
                             >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">读《琅嬛文集》录</span>
+                                <span class="post-nav-title-item">Spring Cloud Gateway详解</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                                 <span class="right arrow-icon flex-center">
@@ -592,7 +449,7 @@
             <div class="toc-content-container">
                 <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%91%E5%B9%B4%E6%9C%9D%E9%A3%9F"><span class="nav-text">少年朝食</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E5%8D%AB"><span class="nav-text">大卫</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B8%85%E5%98%89%E5%BD%95"><span class="nav-text">清嘉录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E5%89%8D%E6%85%A2"><span class="nav-text">从前慢</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AD%8F%E7%8E%9B%E6%97%A9%E6%98%A5"><span class="nav-text">魏玛早春</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%88%AA%E5%93%87%E5%9B%BD"><span class="nav-text">爪哇国</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E5%81%88"><span class="nav-text">如偈</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%91%E5%BA%B5%E7%89%87%E7%AE%80"><span class="nav-text">谑庵片简</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%AC%E5%B8%88%E4%BA%94%E6%9C%88"><span class="nav-text">京师五月</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%88%91"><span class="nav-text">我</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%A3%E8%8A%B1%E6%BA%AA%E5%BD%92"><span class="nav-text">浣花溪归</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%8F%E6%97%A5%E5%B1%B1%E5%B1%85"><span class="nav-text">夏日山居</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%AE%89%E8%A3%85Node-js"><span class="nav-text">一、安装Node.js</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%88%9B%E5%BB%BA%E5%85%A8%E5%B1%80%E5%AE%89%E8%A3%85%E5%92%8C%E7%BC%93%E5%AD%98%E7%9B%AE%E5%BD%95"><span class="nav-text">二、创建全局安装和缓存目录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-text">三、配置环境变量</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AE%89%E8%A3%85vue"><span class="nav-text">三、安装vue</span></a></li></ol>
     </div>
 </div>
 

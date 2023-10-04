@@ -337,8 +337,8 @@ body {
   padding: 0;
   color: var(--text-color-3);
   font-weight: 400;
-  font-size: 18px;
-  font-family: STSong;
+  font-size: 16px;
+  font-family: Microsoft YaHei;
   line-height: 22px;
   letter-spacing: 0.2px;
   background: var(--background-color-1);
@@ -365,14 +365,14 @@ body::-webkit-scrollbar {
 @media (max-width: 800px) {
   html,
   body {
-    font-size: 17.28px;
+    font-size: 15.36px;
     line-height: 21.119999999999997px;
   }
 }
 @media (max-width: 500px) {
   html,
   body {
-    font-size: 16.2px;
+    font-size: 14.4px;
     line-height: 19.8px;
   }
 }
@@ -472,6 +472,10 @@ button {
   transition-timing-function: ease, ease, ease, ease, linear;
   transition-duration: 0.2s, 0.2s, 0.2s, 0.2s, 0.2s;
   transition-property: color, background, box-shadow, border-color, transform;
+}
+.btn:hover {
+  transform: scaleX(1.06) scaleY(1.06);
+  box-shadow: 1px 1px 8px var(--shadow-hover-color);
 }
 .btn:hover {
   color: var(--background-color-1);

@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="愔颂">
+    <meta name="author" content="远岫">
+    
+    <title>
+        
+            自定义注解实现AOP切面 |
+        
+        愔颂
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.png">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/fontawesome/css/regular.min.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/fontawesome/css/solid.min.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/fontawesome/css/brands.min.css">
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.json"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":false,"init_open":true},"style":{"primary_color":"#990033","logo":"/images/logo.png","favicon":"/images/logo.png","avatar":"https://s1.ax1x.com/2022/11/12/ziJjfK.jpg","font_size":"16px","font_family":"Microsoft YaHei","hover":{"shadow":true,"scale":true},"first_screen":{"enable":true,"header_transparent":true,"background_img":"https://s1.ax1x.com/2022/11/13/zkpQFP.jpg","description":".","font_color":"#00000000","hitokoto":false},"scroll":{"progress_bar":false,"percent":false}},"local_search":{"enable":true,"preload":true},"code_copy":{},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"default"},"side_tools":{},"pjax":{"enable":false},"lazyload":{"enable":true},"comment":{"enable":true,"use":"valine","valine":{"appid":"ZUKsDiFCHfBxuQFnh1UC5l7P-MdYXbMMI","appkey":"jQHh3ynQ7pckO3cgMhgQaMC3","placeholder":"欢迎和我留言♥"},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.7"},"waline":{"server_url":"https://waline-ebqlq2h6z-echoalways.vercel.app/","reaction":false,"version":2}},"post":{"author_label":{"enable":false,"auto":true,"custom_label_list":["Trainee","Engineer","Architect"]},"word_count":{"enable":false,"wordcount":false,"min2read":false},"img_align":"center","copyright_info":false,"share":true,"reward":{"enable":true,"img_link":"https://z1.ax1x.com/2023/10/03/pPLxvT0.jpg","text":"赞赏作者♥"}},"version":"3.5.2"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"};
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+                <a class="logo-image" href="/">
+                    <img src="/images/logo.png">
+                </a>
+            
+            <a class="logo-title" href="/">
+               愔颂
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               target="_blank" rel="noopener" href="https://www.xiaohongshu.com/user/profile/5dbc56e20000000001005c42"
+                            >
+                                相册
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       target="_blank" rel="noopener" href="https://www.xiaohongshu.com/user/profile/5dbc56e20000000001005c42">相册</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="post-page-container">
+        <div class="article-content-container">
+
+            <div class="article-title">
+                <span class="title-hover-animation">自定义注解实现AOP切面</span>
+            </div>
+
+            
+                <div class="article-header">
+                    <div class="avatar">
+                        <img src="https://s1.ax1x.com/2022/11/12/ziJjfK.jpg">
+                    </div>
+                    <div class="info">
+                        <div class="author">
+                            <span class="name">远岫</span>
+                            
+                        </div>
+                        <div class="meta-info">
+                            
+<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        
+            <i class="fa-regular fa-calendar-plus"></i>&nbsp;
+        
+        <span class="pc">2023-10-04 14:58:51</span>
+        <span class="mobile">2023-10-04 14:58</span>
+    </span>
+    
+        <span class="article-update-date article-meta-item">
+        <i class="fas fa-file-pen"></i>&nbsp;
+        <span class="pc">2023-10-04 15:03:10</span>
+    </span>
+    
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Spring-Boot/">Spring Boot</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                        </div>
+                    </div>
+                </div>
+            
+
+            <div class="article-content keep-markdown-body">
+                <meta name="referrer" content="no-referrer"/>
+
+<p>面向切面编程，Spring AOP核心概念、使用示例。</p>
+<span id="more"></span>
+
+<h2 id="1、基础概念"><a href="#1、基础概念" class="headerlink" title="1、基础概念"></a>1、基础概念</h2><h3 id="1-1、切面-Aspect"><a href="#1-1、切面-Aspect" class="headerlink" title="1.1、切面(Aspect)"></a>1.1、切面(Aspect)</h3><p>首先要理解‘切’字，需要把对象想象成一个立方体，传统的面向对象思维，类定义完成之后（封装）。每次实例化一个对象，对类定义中的成员变量赋值，就相当于对这个立方体进行了一个定义，定义完成之后，那个对象就在那里，不卑不亢，不悲不喜，等着被使用，等着被回收。</p>
+<p>面向切面编程则是指，对于一个我们已经封装好的类，我们可以在编译期间或在运行期间，对其进行切割，把立方体切开，在原有的方法里面添加（织入）一些新的代码，对原有的方法代码进行一次增强处理。而那些增强部分的代码，就被称之为切面，如下面代码实例中的通用日志处理代码，常见的还有事务处理、权限认证等等。</p>
+<h3 id="2、切入点-PointCut"><a href="#2、切入点-PointCut" class="headerlink" title="2、切入点(PointCut)"></a>2、切入点(PointCut)</h3><p>要对哪些类中的哪些方法进行增强，进行切割，指的是被增强的方法。即要切哪些东西。</p>
+<h3 id="3、连接点-JoinPoint"><a href="#3、连接点-JoinPoint" class="headerlink" title="3、连接点(JoinPoint)"></a>3、连接点(JoinPoint)</h3><p>我们知道了要切哪些方法后，剩下的就是什么时候切，在原方法的哪一个执行阶段加入增加代码，这个就是连接点。如方法调用前，方法调用后，发生异常时等等。</p>
+<h3 id="4、通知-Advice"><a href="#4、通知-Advice" class="headerlink" title="4、通知(Advice)"></a>4、通知(Advice)</h3><p>通知被织入方法，该如何被增强。定义切面的具体实现。那么这里面就涉及到一个问题，空间（切哪里）和时间（什么时候切，在何时加入增加代码），空间我们已经知道了就是切入点中定义的方法，而什么时候切，则是连接点的概念，如下面实例中，通用日志处理（切面），@Pointcut规则中指明的方法即为切入点，@Before、@After是连接点，而下面的代码就是对应通知。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Before(&quot;cutMethod()&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">begin</span><span class="params">()</span> &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;==@Before== lingyejun blog logger : begin&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5、目标对象-Target-Object"><a href="#5、目标对象-Target-Object" class="headerlink" title="5、目标对象(Target Object)"></a>5、目标对象(Target Object)</h3><p>被一个或多个切面所通知的对象，即为目标对象。</p>
+<h3 id="6、AOP代理对象-AOP-Proxy-Object"><a href="#6、AOP代理对象-AOP-Proxy-Object" class="headerlink" title="6、AOP代理对象(AOP Proxy Object)"></a>6、AOP代理对象(AOP Proxy Object)</h3><p>AOP代理是AOP框架所生成的对象，该对象是目标对象的代理对象。代理对象能够在目标对象的基础上，在相应的连接点上调用通知。</p>
+<h3 id="7、织入-Weaving"><a href="#7、织入-Weaving" class="headerlink" title="7、织入(Weaving)"></a>7、织入(Weaving)</h3><p>将切面切入到目标方法之中，使目标方法得到增强的过程被称之为织入。</p>
+<h2 id="2、示例"><a href="#2、示例" class="headerlink" title="2、示例"></a>2、示例</h2><p>插曲：<a class="link"   target="_blank" rel="noopener" href="https://www.jianshu.com/p/34cc2537a75b" >IDEA右键新建时，选项竟然没有Java Class<i class="fas fa-external-link-alt"></i></a></p>
+<p>背景：利用aop实现日志切面。</p>
+<p>步骤：</p>
+<h3 id="1、导入切面需要的依赖"><a href="#1、导入切面需要的依赖" class="headerlink" title="1、导入切面需要的依赖"></a><strong>1、导入切面需要的依赖</strong></h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">      &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">     &lt;artifactId&gt;spring-boot-starter-aop&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2、自定义注解-AOPLog"><a href="#2、自定义注解-AOPLog" class="headerlink" title="2、自定义注解 AOPLog"></a>2、自定义注解 AOPLog</h3><p>Target：描述了注解修饰的对象范围，有如下取值：</p>
+<ul>
+<li>METHOD：用于描述方法</li>
+<li>PACKAGE：用于描述包</li>
+<li>PARAMETER：用于描述方法变量</li>
+<li>TYPE：用于描述类、接口或enum类型</li>
+</ul>
+<p>Retention：表示注解保留时间长短</p>
+<ul>
+<li>SOURCE：在源文件中有效，编译过程中会被忽略</li>
+<li>CLASS：随源文件一起编译在class文件中，运行时忽略</li>
+<li>RUNTIME：在运行时有效</li>
+</ul>
+<p>只有定义为 RetentionPolicy.RUNTIME（在运行时有效）时，我们才能通过反射获取到注解，然后根据注解的一系列值，变更不同的操作。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 指定注解使用在方法上</span></span><br><span class="line"><span class="meta">@Target(ElementType.METHOD)</span></span><br><span class="line"><span class="comment">// 指定生效至运行时</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> AOPLog &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 指定是否详情显示</span></span><br><span class="line"><span class="comment">     * true 显示详情, 默认false</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="type">boolean</span> <span class="title function_">isDetail</span><span class="params">()</span> <span class="keyword">default</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3、定义切面类"><a href="#3、定义切面类" class="headerlink" title="3、定义切面类"></a>3、定义切面类</h3><p>补充：切入点表达式</p>
+<p><strong>1）bean表达式</strong></p>
+<p>bean表达式一般应用于类级别，实现粗粒度的切入点定义，案例分析：</p>
+<p>bean(“userServiceImpl”)  指定一个userServiceImpl类中所有方法。</p>
+<p>bean(“*ServiceImpl”)  指定所有后缀为ServiceImpl的类中所有方法。</p>
+<p><strong>2）within表达式</strong></p>
+<p>within表达式应用于类级别，实现粗粒度的切入点表达式定义，案例分析：</p>
+<ul>
+<li>within(“aop.service.UserServiceImpl”)  指定当前包中这个类内部的所有方法。</li>
+<li>within(“aop.service.*”)  指定当前目录下的所有类的所有方法。</li>
+<li>within(“aop.service…*”)  指定当前目录以及子目录中类的所有方法。</li>
+</ul>
+<p><strong>3）execution表达式</strong></p>
+<p>execution表达式应用于方法级别，实现细粒度的切入点表达式定义，案例分析：<br>语法：execution(返回值类型 包名.类名.方法名(参数列表))。</p>
+<ul>
+<li>execution(void aop.service.UserServiceImpl.addUser())  匹配addUser方法。</li>
+<li>execution(void aop.service.PersonServiceImpl.addUser(String))  方法参数必须为String的addUser方法。</li>
+<li>execution(* aop.service…*.*(…))  万能配置。</li>
+</ul>
+<p><strong>4）@annotation表达式</strong></p>
+<p>@annotaion表达式应用于方法级别，实现细粒度的切入点表达式定义，案例分析</p>
+<ul>
+<li>@annotation(anno.RequiredLog) 匹配有此注解描述的方法。</li>
+<li>@annotation(anno.RequiredCache) 匹配有此注解描述的方法。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Aspect</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AOPLogAspect</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">Logger</span> <span class="variable">log</span> <span class="operator">=</span> LoggerFactory.getLogger(AOPLogAspect.class);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 指定切点, 切点的位置是存在该注解com.example.aoptest.AOPLog</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Pointcut(&quot;@annotation(com.example.aoptest.AOPLog)&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">logPointCut</span><span class="params">()</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 环绕通知, 该处写具体日志逻辑</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> joinPoint</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Around(&quot;logPointCut()&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">logAround</span><span class="params">(ProceedingJoinPoint joinPoint)</span> &#123;</span><br><span class="line">        <span class="type">MethodSignature</span> <span class="variable">signature</span> <span class="operator">=</span> (MethodSignature) joinPoint.getSignature();</span><br><span class="line">        <span class="comment">// 获取方法名称</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">methodName</span> <span class="operator">=</span> signature.getName();</span><br><span class="line">        <span class="comment">// 获取入参</span></span><br><span class="line">        Object[] param = joinPoint.getArgs();</span><br><span class="line">        <span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">        <span class="keyword">for</span> (Object o : param) &#123;</span><br><span class="line">            sb.append(o).append(<span class="string">&quot;; &quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        log.info(<span class="string">&quot;进入方法[&#123;&#125;], 参数有[&#123;&#125;]&quot;</span>, methodName, sb.toString());</span><br><span class="line"></span><br><span class="line">        <span class="type">String</span> <span class="variable">resp</span> <span class="operator">=</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">Object</span> <span class="variable">proceed</span> <span class="operator">=</span> joinPoint.proceed();</span><br><span class="line">            resp = JSON.toJSONString(proceed, SerializerFeature.WriteMapNullValue);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable throwable) &#123;</span><br><span class="line">            throwable.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取方法上的注解，判断如果isDetail值为true，则打印结束日志</span></span><br><span class="line">        <span class="type">Method</span> <span class="variable">method</span> <span class="operator">=</span> signature.getMethod();</span><br><span class="line">        <span class="type">AOPLog</span> <span class="variable">annotation</span> <span class="operator">=</span> method.getAnnotation(AOPLog.class);</span><br><span class="line">        <span class="type">boolean</span> <span class="variable">isDetail</span> <span class="operator">=</span> annotation.isDetail();</span><br><span class="line">        <span class="keyword">if</span> (isDetail) &#123;</span><br><span class="line">            log.info(<span class="string">&quot;方法[&#123;&#125;]执行结束, 返回值[&#123;&#125;]&quot;</span>, methodName, resp);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-编写测试接口"><a href="#4-编写测试接口" class="headerlink" title="4. 编写测试接口"></a>4. 编写测试接口</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AopLogController</span> &#123;</span><br><span class="line">    <span class="comment">// 指定注解@AOPLog</span></span><br><span class="line">    <span class="meta">@AOPLog</span></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/testAOP&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">testAOPLog</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;ok&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 指定注解@AOPLog, 同时isDetail = true</span></span><br><span class="line">    <span class="meta">@AOPLog(isDetail = true)</span></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/testAOPLogDetail&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">testAOPLogDetail</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;ok&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+            </div>
+
+            
+
+            
+
+            
+                <div class="article-nav">
+                    
+                        <div class="article-prev">
+                            <a class="prev"
+                               rel="prev"
+                               href="/2023/10/04/Swagger%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3%E4%BD%BF%E7%94%A8/"
+                            >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                                <span class="title flex-center">
+                                <span class="post-nav-title-item">Swagger接口文档使用</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                            </a>
+                        </div>
+                    
+                    
+                        <div class="article-next">
+                            <a class="next"
+                               rel="next"
+                               href="/2023/10/04/Nacos%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/"
+                            >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Nacos使用笔记</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                                <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                            </a>
+                        </div>
+                    
+                </div>
+            
+
+            
+                <div class="comment-container">
+                    
+<div class="comments-container">
+    <div id="comments-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments"></i>&nbsp;评论
+    </div>
+    
+        
+            
+
+    <div class="valine-container">
+        <script  src="//cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+          function loadValine() {
+            new Valine({
+              el: '#vcomments',
+              appId: 'ZUKsDiFCHfBxuQFnh1UC5l7P-MdYXbMMI',
+              appKey: 'jQHh3ynQ7pckO3cgMhgQaMC3',
+              meta: ['nick', 'mail', 'link'],
+              avatar: 'wavatar',
+              enableQQ: true,
+              placeholder: '欢迎和我留言♥',
+              lang: 'zh-CN'.toLowerCase()
+            });
+
+            function getAuthor(language) {
+              switch (language) {
+                case 'en':
+                  return 'Author';
+                case 'zh-CN':
+                  return '博主';
+                default:
+                  return 'Master';
+              }
+            }
+
+            // Add "Author" identify
+            const getValineDomTimer = setInterval(() => {
+              const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+              if (vcards.length > 0) {
+                let author = '远岫';
+
+                if (author) {
+                  for (let vcard of vcards) {
+                    const vnick_dom = vcard.querySelector('.vhead .vnick');
+                    const vnick = vnick_dom.innerHTML;
+                    if (vnick === author) {
+                      vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                    }
+                  }
+                }
+                clearInterval(getValineDomTimer);
+              } else {
+                clearInterval(getValineDomTimer);
+              }
+            }, 2000);
+          }
+
+          if ('false' === 'true') {
+            const loadValineTimeout = setTimeout(() => {
+              loadValine();
+              clearTimeout(loadValineTimeout);
+            }, 1000);
+          } else {
+            window.addEventListener('DOMContentLoaded', loadValine);
+          }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+                </div>
+            
+        </div>
+
+        
+            <div class="toc-content-container">
+                <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5"><span class="nav-text">1、基础概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1%E3%80%81%E5%88%87%E9%9D%A2-Aspect"><span class="nav-text">1.1、切面(Aspect)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E5%88%87%E5%85%A5%E7%82%B9-PointCut"><span class="nav-text">2、切入点(PointCut)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E8%BF%9E%E6%8E%A5%E7%82%B9-JoinPoint"><span class="nav-text">3、连接点(JoinPoint)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%E3%80%81%E9%80%9A%E7%9F%A5-Advice"><span class="nav-text">4、通知(Advice)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5%E3%80%81%E7%9B%AE%E6%A0%87%E5%AF%B9%E8%B1%A1-Target-Object"><span class="nav-text">5、目标对象(Target Object)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6%E3%80%81AOP%E4%BB%A3%E7%90%86%E5%AF%B9%E8%B1%A1-AOP-Proxy-Object"><span class="nav-text">6、AOP代理对象(AOP Proxy Object)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7%E3%80%81%E7%BB%87%E5%85%A5-Weaving"><span class="nav-text">7、织入(Weaving)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81%E7%A4%BA%E4%BE%8B"><span class="nav-text">2、示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E5%AF%BC%E5%85%A5%E5%88%87%E9%9D%A2%E9%9C%80%E8%A6%81%E7%9A%84%E4%BE%9D%E8%B5%96"><span class="nav-text">1、导入切面需要的依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3-AOPLog"><span class="nav-text">2、自定义注解 AOPLog</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E5%AE%9A%E4%B9%89%E5%88%87%E9%9D%A2%E7%B1%BB"><span class="nav-text">3、定义切面类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E7%BC%96%E5%86%99%E6%B5%8B%E8%AF%95%E6%8E%A5%E5%8F%A3"><span class="nav-text">4. 编写测试接口</span></a></li></ol></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            
+<footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+                <span>2022</span> -
+            
+            2023
+            
+                &nbsp;<i class="fas fa-heart icon-animate"></i>
+                &nbsp;<a href="/">远岫</a>
+            
+        </div>
+        
+            <script async 
+                    src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                    访问人数&nbsp;<span id="busuanzi_value_site_uv"></span>&ensp;
+                
+                
+                    总访问量&nbsp;<span id="busuanzi_value_site_pv"></span>
+                
+            </div>
+        
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="tools-item flex-center go-to-comments">
+                <i class="fas fa-comment"></i>
+                <span class="post-comments-count"></span>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/js/main.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/js/header-shrink.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/js/back2top.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/js/dark-light-toggle.js"></script>
+
+
+
+
+    <script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/js/local-search.js"></script>
+
+
+
+    <script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/js/code-block.js"></script>
+
+
+
+    <script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/js/lazyload.js"></script>
+
+
+<div class="post-scripts">
+    
+        <script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/js/post-helper.js"></script>
+        
+            <script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/js/libs/anime.min.js"></script>
+        
+        
+            <script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.5.2/source/js/toc.js"></script>
+        
+    
+</div>
+
+
+
+</body>
+</html>
